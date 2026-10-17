@@ -1,0 +1,12 @@
+---
+description: TDD obrigatório (RED → GREEN → REFACTOR) para código e testes .NET
+globs: ["src/**/*.cs", "tests/**/*.cs"]
+alwaysApply: false
+---
+
+Leia `.claude/rules/tdd.md`.
+
+1. RED: escreva um teste que falha pelo motivo certo e **rode-o** para vê-lo falhar.
+2. GREEN: o menor código que passa. Nada além do que o teste exige.
+3. REFACTOR: limpe com os testes verdes. Não mude comportamento.
+Nome do teste: `Dado_Quando_Entao`. Sem `Thread.Sleep`; espere por condição.

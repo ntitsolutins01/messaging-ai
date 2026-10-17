@@ -1,0 +1,19 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{yml,yaml,json,md,mdc,props,csproj}]
+indent_size = 2
+
+[*.sh]
+end_of_line = lf
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:suggestion
+# Quality Gate: complexidade ciclomática acima do limite (CodeMetricsConfig.txt) vira aviso, e erro no gate.
+dotnet_diagnostic.CA1502.severity = warning

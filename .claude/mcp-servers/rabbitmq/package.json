@@ -1,0 +1,13 @@
+{
+  "name": "mcp-rabbitmq",
+  "version": "1.0.0",
+  "description": "MCP server for RabbitMQ via Management HTTP API",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "mcp-rabbitmq": "index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

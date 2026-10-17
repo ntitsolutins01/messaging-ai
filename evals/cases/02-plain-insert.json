@@ -1,0 +1,8 @@
+{
+  "id": "02-plain-insert",
+  "title": "Insert simples sem unicidade",
+  "code": "public async Task HandleAsync(Message message, CancellationToken ct)\n{\n    _db.InternalRecords.Add(new InternalRecord { Id = Guid.NewGuid(), Data = message.Payload });\n    await _db.SaveChangesAsync(ct);\n    await _bus.AckAsync(message, ct);\n}",
+  "expected_findings": [
+    "insert simples sem restrição UNIQUE nem upsert pela chave de idempotência: reentrega da mensagem cria registro duplicado"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "03-publish-in-transaction",
+  "title": "Publicação no broker dentro da transação",
+  "code": "public async Task HandleAsync(Message message, CancellationToken ct)\n{\n    await using var tx = await _db.Database.BeginTransactionAsync(ct);\n    await _db.UpsertAsync(new InternalRecord(message.IdempotencyKey, message.Payload), ct);\n    await _bus.PublishAsync(new RecordCreated(message.IdempotencyKey), ct);\n    await tx.CommitAsync(ct);\n    await _bus.AckAsync(message, ct);\n}",
+  "expected_findings": [
+    "publicação no broker dentro da transação (dual write): se o commit falhar depois da publicação, a mensagem de saída existe sem o registro; deveria usar a outbox na mesma transação"
+  ]
+}

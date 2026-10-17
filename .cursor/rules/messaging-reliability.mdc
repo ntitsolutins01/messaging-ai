@@ -1,0 +1,13 @@
+---
+description: Regras de confiabilidade para consumidores, outbox e transações do worker
+globs: ["src/**/*.cs"]
+alwaysApply: false
+---
+
+Leia `.claude/rules/messaging-reliability.md` (mesma regra, usada pelo Claude Code).
+
+Resumo inegociável:
+- Estado + registro interno + outbox de saída na **mesma transação**.
+- `INSERT ... ON CONFLICT` com `UNIQUE(idempotency_key)`; nunca `INSERT` simples.
+- **Ack só depois do commit.** Nunca publicar no broker dentro da transação (use outbox).
+- Falha de handler: decisão explícita de retry ou DLQ. Nunca engolir exceção.

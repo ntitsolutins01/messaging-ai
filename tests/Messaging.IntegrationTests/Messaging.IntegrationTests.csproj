@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging.TestSupport\Messaging.TestSupport.csproj" />
+    <ProjectReference Include="..\..\src\Hosts\Messaging.Api\Messaging.Api.csproj" />
+  </ItemGroup>
+</Project>

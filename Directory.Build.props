@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Quality Gate (módulo 09): avisos viram erros só quando -p:QualityGate=true (CI e scripts/quality-gate.sh). -->
+    <TreatWarningsAsErrors Condition="'$(QualityGate)' == 'true'">true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Limite de complexidade ciclomática (CA1502), configurado em CodeMetricsConfig.txt. -->
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)CodeMetricsConfig.txt" />
+  </ItemGroup>
+</Project>

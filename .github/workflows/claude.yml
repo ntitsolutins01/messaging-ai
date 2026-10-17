@@ -1,0 +1,37 @@
+name: Claude (@claude)
+
+# Modo interativo: comente "@claude <pedido>" em issue ou PR. Só quem tem permissão de escrita aciona.
+# Exemplos:
+#   @claude escreva os testes que faltam para este PR
+#   @claude implemente a spec 002 seguindo /implement-spec
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  claude:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: |
+            --max-turns 30
+            --allowedTools "Bash(dotnet build:*),Bash(dotnet test:*),Bash(bash scripts/bootstrap.sh),Bash(bash scripts/quality-gate.sh),Edit,Write,Read,Grep,Glob"

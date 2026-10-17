@@ -1,0 +1,25 @@
+name: Funcionalidade
+description: Proponha uma funcionalidade (vira spec em specs/)
+labels: ["feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Que dor isto resolve e para quem?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceite
+      description: "Dado … Quando … Então …"
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Módulo
+      options: [Ingestion, Processing, Operations, Host, Não sei]
+    validations:
+      required: true

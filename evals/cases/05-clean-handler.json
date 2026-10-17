@@ -1,0 +1,6 @@
+{
+  "id": "05-clean-handler",
+  "title": "Handler correto (caso limpo)",
+  "code": "public async Task HandleAsync(Message message, CancellationToken ct)\n{\n    await using var tx = await _db.Database.BeginTransactionAsync(ct);\n    var raw = await _db.LockEventAsync(message.EventId, skipLocked: true, ct);\n    if (raw is null || raw.Status == EventStatus.Done)\n    {\n        await tx.CommitAsync(ct);\n        await _bus.AckAsync(message, ct);\n        return;\n    }\n\n    await _db.UpsertInternalRecordAsync(raw.IdempotencyKey, raw.Payload, ct); // ON CONFLICT (idempotency_key) DO UPDATE\n    await _db.InsertOutboxAsync(raw.IdempotencyKey, new RecordCreated(raw.IdempotencyKey), ct); // ON CONFLICT DO NOTHING\n    raw.MarkDone();\n    await _db.SaveChangesAsync(ct);\n    await tx.CommitAsync(ct);\n    await _bus.AckAsync(message, ct);\n}",
+  "expected_findings": []
+}

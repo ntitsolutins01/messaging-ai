@@ -1,0 +1,71 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Em fork o GitHub não entrega secrets; a revisão roda só em PR de branch do mesmo repositório.
+    if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Você é o agente `pr-reviewer` (definido em .claude/agents/pr-reviewer.md). Siga-o à risca.
+            Revise o PR ${{ github.repository }}#${{ github.event.pull_request.number }} contra CLAUDE.md e .claude/rules/.
+
+            1. Leia o diff com `gh pr diff ${{ github.event.pull_request.number }}`.
+            2. Comente cada achado como comentário inline, com severidade [CRÍTICO], [ATENÇÃO] ou [SUGESTÃO].
+            3. Se faltar teste para código novo, comente com o esqueleto do teste sugerido (não faça push).
+            4. Quanto ao rótulo `claude-blocking`:
+               - Se houver QUALQUER achado [CRÍTICO], rode: gh pr edit ${{ github.event.pull_request.number }} --add-label claude-blocking
+               - Se não houver, rode: gh pr edit ${{ github.event.pull_request.number }} --remove-label claude-blocking
+            5. Poste um comentário-resumo com `gh pr comment` contendo a contagem por severidade.
+            São CRÍTICOS: efeito duplicado possível, ack antes do commit, insert sem UNIQUE/upsert, publicação no broker
+            dentro da transação, webhook sem validação de assinatura, segredo no código, quebra de fronteira entre módulos.
+          claude_args: |
+            --max-turns 15
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh pr edit:*),Read,Grep,Glob"
+
+  # Este é o check que o branch protection deve exigir ("Claude review gate").
+  # Falha enquanto o PR tiver o rótulo claude-blocking.
+  gate:
+    name: Claude review gate
+    needs: review
+    if: always() && github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Falha se há achado crítico
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ needs.review.result }}" != "success" ]; then
+            echo "A revisão do Claude não concluiu (${{ needs.review.result }}). Bloqueando por segurança."
+            exit 1
+          fi
+          labels="$(gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json labels --jq '.labels[].name')"
+          if echo "$labels" | grep -qx "claude-blocking"; then
+            echo "Há achado CRÍTICO apontado pelo Claude. Corrija e faça push para nova revisão."
+            exit 1
+          fi
+          echo "Sem achados críticos."

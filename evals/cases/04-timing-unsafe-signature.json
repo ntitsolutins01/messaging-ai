@@ -1,0 +1,9 @@
+{
+  "id": "04-timing-unsafe-signature",
+  "title": "Comparação de assinatura insegura",
+  "code": "public bool IsValid(byte[] body, string signatureHex)\n{\n    var expected = Convert.ToHexString(HMACSHA256.HashData(_key, body));\n    return expected.ToLowerInvariant() == signatureHex;\n}",
+  "expected_findings": [
+    "comparação de assinatura com == não é de tempo constante (vulnerável a timing attack); usar CryptographicOperations.FixedTimeEquals",
+    "não há janela de tempo/timestamp na assinatura, permitindo replay"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://poc:poc@localhost:5432/messaging_poc"
+      ]
+    },
+    "kafka": {
+      "command": "npx",
+      "args": ["-y", "mcp-kafka"],
+      "env": {
+        "KAFKA_BROKERS": "localhost:9092",
+        "KAFKA_CLIENT_ID": "mcp-claude-client",
+        "KAFKAJS_NO_PARTITIONER_WARNING": "1"
+      }
+    },
+    "rabbitmq": {
+      "command": "node",
+      "args": [".claude/mcp-servers/rabbitmq/index.js"],
+      "env": {
+        "RABBITMQ_MGMT_URL": "http://localhost:15672",
+        "RABBITMQ_USER": "poc",
+        "RABBITMQ_PASSWORD": "poc",
+        "RABBITMQ_VHOST": "/"
+      }
+    }
+  }
+}

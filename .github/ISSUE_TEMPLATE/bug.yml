@@ -1,0 +1,29 @@
+name: Bug
+description: Algo se comportou errado
+labels: ["bug"]
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Observado
+      description: Inclua o CorrelationId e o EventId se houver. Não cole segredos nem payloads sensíveis.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Como reproduzir
+    validations:
+      required: true
+  - type: checkboxes
+    id: duplicate
+    attributes:
+      label: Envolve efeito duplicado ou evento perdido?
+      options:
+        - label: Sim (prioridade máxima)

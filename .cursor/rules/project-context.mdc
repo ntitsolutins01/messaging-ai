@@ -1,0 +1,14 @@
+---
+description: Contexto do projeto Messaging POC (monólito modular .NET 8, webhook → fila → worker idempotente)
+alwaysApply: true
+---
+
+# Messaging POC
+
+Fonte única de verdade: `CLAUDE.md` na raiz. Leia antes de qualquer mudança.
+
+- Monólito modular: `Ingestion`, `Processing`, `Operations`. Módulos só se falam por `Messaging.Contracts`.
+- Objetivo: zero efeitos duplicados. Toda escrita é idempotente (`UNIQUE` + upsert) e transacional com a outbox.
+- Nenhum módulo conhece Kafka ou RabbitMQ.
+- Fluxo de trabalho: spec em `specs/` → teste que falha → código mínimo → refatorar.
+- Antes do PR: `bash scripts/quality-gate.sh`.

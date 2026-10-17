@@ -1,0 +1,8 @@
+{
+  "id": "01-ack-before-commit",
+  "title": "Ack antes do commit",
+  "code": "public async Task HandleAsync(Message message, CancellationToken ct)\n{\n    await _bus.AckAsync(message, ct);\n    var record = new InternalRecord(message.IdempotencyKey, message.Payload);\n    await _db.Upsert(record, ct);\n    await _db.SaveChangesAsync(ct);\n}",
+  "expected_findings": [
+    "ack acontece antes do commit do banco: se o processo cair entre as duas linhas, a mensagem é perdida e o efeito nunca ocorre"
+  ]
+}

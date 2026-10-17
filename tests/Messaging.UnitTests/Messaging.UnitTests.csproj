@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging.TestSupport\Messaging.TestSupport.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Messaging.Ingestion\Messaging.Ingestion.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Messaging.Processing\Messaging.Processing.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Messaging.Operations\Messaging.Operations.csproj" />
+  </ItemGroup>
+</Project>

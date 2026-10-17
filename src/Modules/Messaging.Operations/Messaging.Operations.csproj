@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Messaging.SharedKernel\Messaging.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\Contracts\Messaging.Contracts\Messaging.Contracts.csproj" />
+  </ItemGroup>
+</Project>
