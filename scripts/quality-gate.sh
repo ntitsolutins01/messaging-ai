@@ -33,7 +33,13 @@ run_gate() {
 }
 
 check_coverage() {
-  python3 - "$COVERAGE_MIN" <<'PY'
+  local py_cmd
+  py_cmd=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || echo "")
+  if [ -z "$py_cmd" ]; then
+    echo "python/python3 não encontrado. Instale Python para checar cobertura."
+    return 2
+  fi
+  "$py_cmd" - "$COVERAGE_MIN" <<'PY'
 import glob, os, re, sys
 minimum = float(sys.argv[1])
 files = glob.glob("TestResults/unit/**/coverage.cobertura.xml", recursive=True)

@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>messaging-api-dev</UserSecretsId>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Messaging.SharedKernel\Messaging.SharedKernel.csproj" />
     <ProjectReference Include="..\..\Shared\Messaging.Observability\Messaging.Observability.csproj" />
